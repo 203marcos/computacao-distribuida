@@ -1,15 +1,20 @@
 package com.unifor.br.server_primary.service;
 
-import com.unifor.br.server_primary.model.User;
-import com.unifor.br.server_primary.repository.UserRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.unifor.br.server_primary.model.User;
+import com.unifor.br.server_primary.repository.UserRepository;
+
 @Service
 public class UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository repository;
     private final RestTemplate restTemplate = new RestTemplate();
@@ -25,8 +30,20 @@ public class UserService {
     public User save(User user) throws IOException {
         repository.save(user);
         // Envia para os outros servidores
-        restTemplate.postForObject(REPLICA_URL, user, User.class);
-        restTemplate.postForObject(REPLICA2_URL, user, User.class);
+        try {
+            restTemplate.postForObject(REPLICA_URL, user, User.class);
+            log.info("Replicated user {} to {}", user.getId(), REPLICA_URL);
+        } catch (Exception e) {
+            log.error("Falha ao replicar para {}: {}", REPLICA_URL, e.getMessage());
+        }
+
+        try {
+            restTemplate.postForObject(REPLICA2_URL, user, User.class);
+            log.info("Replicated user {} to {}", user.getId(), REPLICA2_URL);
+        } catch (Exception e) {
+            log.error("Falha ao replicar para {}: {}", REPLICA2_URL, e.getMessage());
+        }
+
         return user;
     }
 
