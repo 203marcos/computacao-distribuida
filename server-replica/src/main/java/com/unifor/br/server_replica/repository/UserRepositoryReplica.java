@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Repository
 public class UserRepositoryReplica {
 
-    private final String FILE_NAME = "database-replica.txt";
+    private final String FILE_NAME = "E:\\Projetos\\CD\\database-replica.txt";
 
     public void save(User user) throws IOException {
         FileWriter fw = new FileWriter(FILE_NAME, true);

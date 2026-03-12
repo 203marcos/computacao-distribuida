@@ -13,7 +13,7 @@ import com.unifor.br.server_replica.model.User;
 import com.unifor.br.server_replica.repository.UserRepositoryReplica;
 
 @RestController
-@RequestMapping("/replica/users")
+@RequestMapping("/replica2/users")
 public class ReplicaController {
 
     private final UserRepositoryReplica repository;

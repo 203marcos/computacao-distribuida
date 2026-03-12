@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j // Adicionando o Lombok para logs
+@Slf4j
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -18,7 +18,6 @@ public class MessageController {
     @PostMapping
     public ResponseEntity<String> receiveAndRoute(@RequestBody Object payload) {
 
-        // Essa linha vai imprimir no console assim que a mensagem bater no Roteador!
         log.info(">>> MENSAGEM RECEBIDA NO ROTEADOR! Conteúdo: {}", payload);
 
         boolean isDelivered = routingService.forwardMessage(payload);
