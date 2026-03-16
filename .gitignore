@@ -39,6 +39,9 @@ out/
 # Logs e temporários
 *.log
 tmp/
+server-primary/database*.txt
+server-replica/database*.txt
+server-replica2/database*.txt
 
 # Sistema
 .DS_Store

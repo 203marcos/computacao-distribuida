@@ -11,20 +11,13 @@ public class ServerclienteApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ServerclienteApplication.class, args);
 
-		String url = "http://localhost:8080/users";
+		String url = "http://localhost:8085/users";
 
 		RestTemplate restTemplate = new RestTemplate();
 
-//		String json = """
-//				{
-//				"id": 1,
-//				"name": "Teste",
-//				"email": "teste@hotmail.com"
-//				}""";
-
 		User usuario = new User(1L,"teste", "teste@hotmail.com");
 		restTemplate.postForObject(url, usuario, String.class);
-		System.out.println("Usuario enviado com sucesso!");
+		System.out.println("Mensagem enviada ao gateway.");
 	}
 
 }
