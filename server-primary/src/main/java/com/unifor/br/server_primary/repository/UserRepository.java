@@ -13,28 +13,46 @@ public class UserRepository {
 
     private final String FILE_NAME = "database.txt";
 
-    public void save(User user) throws IOException {
-        FileWriter fw = new FileWriter(FILE_NAME, true);
-        fw.write(user.getId() + "," + user.getName() + "," + user.getEmail() + "\n");
-        fw.close();
+    public void save(User user) {
+        try (FileWriter fw = new FileWriter(FILE_NAME, true)) {
+            fw.write(user.getId() + "," + user.getName() + "," + user.getEmail() + "\n");
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao salvar no arquivo", e);
+        }
     }
 
-    public List<User> findAll() throws IOException {
+    public List<User> findAll() {
         Path path = Paths.get(FILE_NAME);
 
         if (!Files.exists(path)) {
             return new ArrayList<>();
         }
 
-        return Files.lines(path)
-                .map(line -> {
-                    String[] parts = line.split(",");
-                    return new User(
-                            Long.parseLong(parts[0]),
-                            parts[1],
-                            parts[2]
-                    );
-                })
-                .collect(Collectors.toList());
+        try {
+            return Files.lines(path)
+                    .filter(line -> !line.trim().isEmpty()) // Evita linhas vazias
+                    .map(line -> {
+                        String[] parts = line.split(",");
+                        return new User(
+                                Long.parseLong(parts[0]),
+                                parts[1],
+                                parts[2]
+                        );
+                    })
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    //Apaga o conteúdo do arquivo para a sincronização
+    public void deleteAll() {
+        try {
+            Files.deleteIfExists(Paths.get(FILE_NAME));
+            // Cria um arquivo vazio novo
+            new File(FILE_NAME).createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao limpar o banco de dados", e);
+        }
     }
 }
